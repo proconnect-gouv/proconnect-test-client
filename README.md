@@ -35,7 +35,7 @@ In `docker-compose.yml`:
 version: "3.5"
 
 services:
-  oidc-test-client:
+  proconnect-test-client:
     image: numerique-gouv/proconnect-test-client
     ports:
       - 3000:3000
@@ -65,7 +65,9 @@ npm start
 
 ## Configuration
 
-Available env variables and there default values are listed [here](.env).
+Available env variables for ProConnect Identité are listed [here](.env).
+
+Available env variables for ProConnect Fédération are listed [here](federation.env).
 
 You can use the app-sandbox.moncomptepro.beta.gouv.fr oidc provider with the following client configuration:
 
