@@ -4,6 +4,7 @@ import * as client from "openid-client";
 import session from "express-session";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import { chain, isObject } from "lodash-es";
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const app = express();
@@ -18,18 +19,12 @@ app.use(
 );
 app.use(morgan("combined"));
 
-const removeNullValues = (obj) =>
-  Object.entries(obj).reduce((a, [k, v]) => (v ? ((a[k] = v), a) : a), {});
-
 const objToUrlParams = (obj) =>
   new URLSearchParams(
-    Object.fromEntries(
-      Object.entries(obj).map(([k, v]) => [
-        k,
-        // stringify objects
-        typeof v === "object" && v !== null ? JSON.stringify(v) : v,
-      ]),
-    ),
+    chain(obj)
+      .omitBy((v) => !v)
+      .mapValues((o) => (isObject(o) ? JSON.stringify(o) : o))
+      .value(),
   );
 
 const getCurrentUrl = (req) =>
@@ -90,14 +85,12 @@ const getAuthorizationControllerFactory = (extraParams) => {
 
       const redirectUrl = client.buildAuthorizationUrl(
         config,
-        objToUrlParams(
-          removeNullValues({
-            nonce,
-            state,
-            ...AUTHORIZATION_DEFAULT_PARAMS,
-            ...extraParams,
-          }),
-        ),
+        objToUrlParams({
+          nonce,
+          state,
+          ...AUTHORIZATION_DEFAULT_PARAMS,
+          ...extraParams,
+        }),
       );
 
       res.redirect(redirectUrl);
@@ -193,10 +186,10 @@ app.post("/logout", async (req, res, next) => {
     const config = await getProviderConfig();
     const redirectUrl = client.buildEndSessionUrl(
       config,
-      objToUrlParams(removeNullValues({
+      objToUrlParams({
         post_logout_redirect_uri: `${process.env.HOST}/`,
         id_token_hint,
-      })),
+      }),
     );
 
     res.redirect(redirectUrl);
