@@ -1,7 +1,7 @@
 # Publishing docker image
 
 ```
-docker build -t numerique-gouv/moncomptepro-test-client .
+docker build -t numerique-gouv/proconnect-test-client .
 ```
 
 Authenticate to the github docker registery:
@@ -11,5 +11,5 @@ https://docs.github.com/en/packages/working-with-a-github-packages-registry/work
 Then
 
 ```
-docker push ghcr.io/numerique-gouv/moncomptepro-test-client
+docker push ghcr.io/numerique-gouv/proconnect-test-client
 ```

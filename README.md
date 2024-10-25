@@ -1,21 +1,21 @@
-# MonComptePro Test Client
+# ProConnect Test Client
 
-This is a minimal, nodeJS-based MonComptePro client, to be used for end-to-end testing.
+This is a minimal, nodeJS-based ProConnect client, to be used for end-to-end testing.
 
 It uses the https://github.com/panva/node-openid-client Library for the actual OIDC Logic.
 
 This tool can be used to test the traditional Authorization Code Flow.
 
-It also uses the `select_organization` & `update_userinfo` MonComptePro prompts.
+It also uses the `select_organization` & `update_userinfo` ProConnect prompts (available only on ProConnect Identité).
 
-This tool is full configured using environment variables.
+This tool is fully configured using environment variables.
 
 ## Run it with Docker
 
 Pull the image:
 
 ```
-docker pull ghcr.io/numerique-gouv/moncomptepro-test-client
+docker pull ghcr.io/numerique-gouv/proconnect-test-client
 ```
 
 Run the container:
@@ -24,7 +24,7 @@ Run the container:
 docker run --rm \
 -p 3000:3000 \
 -e PORT=3000 \
-ghcr.io/numerique-gouv/moncomptepro-test-client
+ghcr.io/numerique-gouv/proconnect-test-client
 ```
 
 ## Run it with Docker Compose
@@ -36,7 +36,7 @@ version: "3.5"
 
 services:
   oidc-test-client:
-    image: rdubigny/moncomptepro-test-client
+    image: numerique-gouv/proconnect-test-client
     ports:
       - 3000:3000
     environment:

@@ -15,7 +15,7 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(
   session({
-    name: "mcp_session",
+    name: "pc_session",
     secret: process.env.SESSION_SECRET,
     rolling: true,
   }),
@@ -25,16 +25,16 @@ app.use(morgan("combined"));
 const removeNullValues = (obj) => Object.entries(obj).reduce((a,[k,v]) => (v ? (a[k]=v, a) : a), {})
 
 const getMcpClient = async () => {
-  const mcpIssuer = await Issuer.discover(process.env.MCP_PROVIDER);
+  const mcpIssuer = await Issuer.discover(process.env.PC_PROVIDER);
 
   return new mcpIssuer.Client({
-    client_id: process.env.MCP_CLIENT_ID,
-    client_secret: process.env.MCP_CLIENT_SECRET,
+    client_id: process.env.PC_CLIENT_ID,
+    client_secret: process.env.PC_CLIENT_SECRET,
     redirect_uris: [redirectUri],
     response_types: ["code"],
-    id_token_signed_response_alg: process.env.MCP_ID_TOKEN_SIGNED_RESPONSE_ALG,
+    id_token_signed_response_alg: process.env.PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
     userinfo_signed_response_alg:
-      process.env.MCP_USERINFO_SIGNED_RESPONSE_ALG || null,
+      process.env.PC_USERINFO_SIGNED_RESPONSE_ALG || null,
   });
 };
 
@@ -42,7 +42,7 @@ const acr_values = process.env.ACR_VALUES
   ? process.env.ACR_VALUES.split(",")
   : null;
 const login_hint = process.env.LOGIN_HINT || null;
-const scope = process.env.MCP_SCOPES;
+const scope = process.env.PC_SCOPES;
 const AUTHORIZATION_DEFAULT_PARAMS = {
   scope,
   login_hint,

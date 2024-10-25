@@ -17,7 +17,7 @@ export default defineConfig({
     supportFile: false,
   },
   env: {
-    MCP_PROVIDER: process.env.MCP_PROVIDER,
+    PC_PROVIDER: process.env.PC_PROVIDER,
   },
 });
 
