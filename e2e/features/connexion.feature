@@ -6,9 +6,9 @@ Fonctionnalité: Connexion de user@yopmail.com
     Alors je vois "Bonjour monde !"
     Quand je clique sur le bouton ProConnect
 
-    Quand je me connecte en tant que user@yopmail.com sur moncomptepro
-    Et je vois "Votre organisation de rattachement" sur moncomptepro
-    Et je clique sur "Continuer" sur moncomptepro
+    Quand je me connecte en tant que user@yopmail.com sur ProConnect
+    Et je vois "Votre organisation de rattachement" sur ProConnect
+    Et je clique sur "Continuer" sur ProConnect
 
     Alors je suis redirigé sur "/"
     Et je vois "Information utilisateur"

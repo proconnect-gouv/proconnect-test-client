@@ -29,7 +29,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/numerique-gouv/moncomptepro-test-client
+          images: ghcr.io/numerique-gouv/proconnect-test-client
           tags: |
             type=sha,format=long,prefix=
             type=ref,event=branch

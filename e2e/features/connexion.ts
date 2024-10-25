@@ -22,22 +22,22 @@ Then("je vois {string}", function (text: string) {
 
 //
 
-When("je vois {string} sur moncomptepro", (_text: string) => {
-  cy.origin(Cypress.env("MCP_PROVIDER"), { args: _text }, (text) => {
+When("je vois {string} sur ProConnect", (_text: string) => {
+  cy.origin(Cypress.env("PC_PROVIDER"), { args: _text }, (text) => {
     cy.contains(text);
   });
 });
 
-When("je clique sur {string} sur moncomptepro", (_text: string) => {
-  cy.origin(Cypress.env("MCP_PROVIDER"), { args: _text }, (text) => {
+When("je clique sur {string} sur ProConnect", (_text: string) => {
+  cy.origin(Cypress.env("PC_PROVIDER"), { args: _text }, (text) => {
     cy.contains(text).click();
   });
 });
 
 When(
-  "je me connecte en tant que user@yopmail.com sur moncomptepro",
+  "je me connecte en tant que user@yopmail.com sur ProConnect",
   (path: string) => {
-    cy.origin(Cypress.env("MCP_PROVIDER"), () => {
+    cy.origin(Cypress.env("PC_PROVIDER"), () => {
       cy.get('[name="login"]').type("user@yopmail.com");
       cy.get('[type="submit"]').click();
 
