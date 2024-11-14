@@ -175,6 +175,7 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
     req.session.oauth2token = tokens;
     res.redirect("/");
   } catch (e) {
+    console.error(e)
     next(e);
   }
 });
@@ -200,5 +201,4 @@ app.post("/logout", async (req, res, next) => {
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`);
-  console.log(process.env);
 });
