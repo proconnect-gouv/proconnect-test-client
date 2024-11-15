@@ -157,7 +157,6 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
   try {
     const config = await getProviderConfig();
     const currentUrl = getCurrentUrl(req);
-    console.log(req.session)
     const tokens = await client.authorizationCodeGrant(config, currentUrl, {
       expectedNonce: req.session.nonce,
       expectedState: req.session.state,
