@@ -17,6 +17,7 @@ app.use(
     rolling: true,
   }),
 );
+app.enable('trust proxy');
 app.use(morgan("combined"));
 
 const objToUrlParams = (obj) =>
