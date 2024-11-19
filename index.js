@@ -156,7 +156,9 @@ app.post(
 app.get(process.env.CALLBACK_URL, async (req, res, next) => {
   try {
     const config = await getProviderConfig();
+    console.log(JSON.stringify(config))
     const currentUrl = getCurrentUrl(req);
+    console.log(currentUrl)
     const tokens = await client.authorizationCodeGrant(config, currentUrl, {
       expectedNonce: req.session.nonce,
       expectedState: req.session.state,
