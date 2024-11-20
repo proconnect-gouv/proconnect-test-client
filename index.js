@@ -31,17 +31,22 @@ const objToUrlParams = (obj) =>
 const getCurrentUrl = (req) =>
   new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
 
+const configOptions = process.env.IS_HTTP_PROTOCOL_FORBIDDEN === "True" ? undefined : {execute: [client.allowInsecureRequests]}
+
 const getProviderConfig = async () => {
-  return await client.discovery(
+  const config = await client.discovery(
     new URL(process.env.PC_PROVIDER),
     process.env.PC_CLIENT_ID,
     {
-      client_secret: process.env.PC_CLIENT_SECRET,
       id_token_signed_response_alg: process.env.PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
       userinfo_signed_response_alg:
         process.env.PC_USERINFO_SIGNED_RESPONSE_ALG || null,
+      
     },
+    client.ClientSecretPost(process.env.PC_CLIENT_SECRET),
+    configOptions
   );
+  return config
 };
 
 const AUTHORIZATION_DEFAULT_PARAMS = {
@@ -161,7 +166,7 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
     const tokens = await client.authorizationCodeGrant(config, currentUrl, {
       expectedNonce: req.session.nonce,
       expectedState: req.session.state,
-    });
+    }, configOptions);
 
     req.session.nonce = null;
     req.session.state = null;
@@ -170,6 +175,7 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
       config,
       tokens.access_token,
       claims.sub,
+      configOptions
     );
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
