@@ -230,5 +230,5 @@ app.post("/logout", async (req, res, next) => {
 });
 
 app.listen(port, () => {
-	console.log(`App listening on port ${port}`);
+	console.log(`App listening on http://localhost:${port}`);
 });
