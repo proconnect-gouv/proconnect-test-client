@@ -90,7 +90,6 @@ app.get("/", async (req, res, next) => {
 				null,
 				2
 			),
-			showBetaFeatures: process.env.SHOW_BETA_FEATURES === "True",
 		});
 	} catch (e) {
 		next(e);
