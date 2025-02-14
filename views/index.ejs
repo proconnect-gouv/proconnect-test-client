@@ -104,13 +104,11 @@
 				
 			</div>
         <% } %>
-        <% if (locals.showBetaFeatures && locals.userinfo) { %>
-            <form action="/force-login" method="post">
-                <button id="force-login">Forcer une reconnexion</button>
-            </form>
-            <br>
+		<br>
+        <% if (locals.userinfo) { %>
+			<p><b>Ce service est sensible, merci de configurer la double authentification :</b></p>
             <form action="/force-2fa" method="post">
-                <button id="force-2fa">Forcer une connexion a deux facteurs</button>
+                <button id="force-2fa" class="fr-btn fr-btn--secondary">Forcer une connexion a deux facteurs</button>
             </form>
             <br>
         <% } %>
