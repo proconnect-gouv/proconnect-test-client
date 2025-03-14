@@ -1,0 +1,82 @@
+<div class="onboarding-container">
+	<div>
+		<h1 class="fr-h3">Configurer la double authentification (2FA)</h1>
+		<p>Choisissez votre méthode de double authentification</p>
+		<p>Choisissez une de ces deux méthodes de validation supplémentaire</p>
+		<div
+			class="fr-alert fr-alert--error fr-mb-1w"
+			id="webauthn-alert-error"
+			hidden
+		></div>
+		<div
+			class="fr-card fr-enlarge-link fr-card--horizontal fr-card--horizontal-tier fr-mb-2w"
+		>
+			<div class="fr-card__body">
+				<div class="fr-card__content">
+					<h3 class="fr-card__title">
+						<a
+							href="https://identite-sandbox.proconnect.gouv.fr/configuring-single-use-code"
+							>Code à usage unique</a
+						>
+					</h3>
+					<p class="fr-card__desc">
+						Vous utiliserez une application ou un logiciel qui
+						génère un code à usage unique
+					</p>
+				</div>
+			</div>
+			<div class="fr-card__header fr-hidden fr-unhidden-md">
+				<div class="fr-card__img">
+					<img
+						class="fr-responsive-img fr-m6w"
+						src="/single-use-code.svg"
+						alt=""
+					/>
+				</div>
+			</div>
+		</div>
+		<div
+			id="webauthn-btn-begin-registration"
+			class="fr-card fr-card--horizontal fr-enlarge-link fr-card--horizontal-tier"
+		>
+			<div class="fr-card__body">
+				<div class="fr-card__content">
+					<h3 class="fr-card__title">
+						<a
+							href="https://identite-sandbox.proconnect.gouv.fr/double-authentication"
+						>
+							Créer une clé d’accès
+						</a>
+					</h3>
+					<p class="fr-card__desc">
+						Clé physique (ex : Yubikey) ou gérée par votre
+						navigateur ou votre appareil mobile (empreinte, faceID).
+					</p>
+				</div>
+			</div>
+			<div class="fr-card__header fr-hidden fr-unhidden-md">
+				<div class="fr-card__img">
+					<img class="fr-responsive-img" src="/padlock.svg" alt="" />
+				</div>
+			</div>
+		</div>
+		<div
+			class="fr-callout fr-icon-alert-line"
+			id="webauthn-not-supported"
+			hidden
+		>
+			<h4 class="fr-callout__title">
+				Impossible de créer une clé d’accès sur cet appareil
+			</h4>
+			<p class="fr-callout__text">
+				Assurez-vous que le système d’exploitation de votre appareil est
+				à jour, que le verrouillage de l’écran et le Bluetooth sont
+				activés, et que vous utilisez un navigateur compatible.
+			</p>
+		</div>
+		<%- include('../partials/go-back.ejs'); %>
+	</div>
+	<div class="centered-container">
+		<img src="/2fa.svg" alt="" />
+	</div>
+</div>
