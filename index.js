@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import expressLayouts from "express-ejs-layouts";
 import * as client from "openid-client";
 import session from "express-session";
 import morgan from "morgan";
@@ -17,8 +18,10 @@ app.use(
 		name: "pc_session",
 		secret: process.env.SESSION_SECRET,
 		rolling: true,
-	})
+	}),
+	expressLayouts
 );
+app.set("layout", "pages/main");
 app.enable("trust proxy");
 app.use(morgan("combined"));
 
@@ -69,18 +72,12 @@ const AUTHORIZATION_DEFAULT_PARAMS = {
 	acr_values: process.env.ACR_VALUES
 		? process.env.ACR_VALUES.split(",")
 		: null,
-	claims: {
-		id_token: {
-			amr: {
-				essential: true,
-			},
-		},
-	},
+	claims: { id_token: { amr: { essential: true } } },
 };
 
 app.get("/", async (req, res, next) => {
 	try {
-		res.render("index", {
+		res.render("pages/index", {
 			title: process.env.SITE_TITLE,
 			userinfo: JSON.stringify(req.session.userinfo, null, 2),
 			idtoken: JSON.stringify(req.session.idtoken, null, 2),
@@ -90,6 +87,26 @@ app.get("/", async (req, res, next) => {
 				null,
 				2
 			),
+		});
+	} catch (e) {
+		next(e);
+	}
+});
+
+app.get("/account-security", async (req, res, next) => {
+	try {
+		res.render("pages/account-security", {
+			title: "Renforcer la sécurité",
+		});
+	} catch (e) {
+		next(e);
+	}
+});
+
+app.get("/2fa", async (req, res, next) => {
+	try {
+		res.render("pages/configuring-2fa", {
+			title: "Configurer la 2FA",
 		});
 	} catch (e) {
 		next(e);
@@ -127,16 +144,12 @@ app.post("/login", getAuthorizationControllerFactory());
 
 app.post(
 	"/select-organization",
-	getAuthorizationControllerFactory({
-		prompt: "select_organization",
-	})
+	getAuthorizationControllerFactory({ prompt: "select_organization" })
 );
 
 app.post(
 	"/update-userinfo",
-	getAuthorizationControllerFactory({
-		prompt: "update_userinfo",
-	})
+	getAuthorizationControllerFactory({ prompt: "update_userinfo" })
 );
 
 app.post(
@@ -202,7 +215,7 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
 		req.session.idtoken = claims;
 		req.session.id_token_hint = tokens.id_token;
 		req.session.oauth2token = tokens;
-		res.redirect("/");
+		res.redirect("/account-security");
 	} catch (e) {
 		console.error(e);
 		next(e);
