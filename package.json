@@ -27,10 +27,10 @@
     "express-session": "^1.18.1",
     "lodash-es": "^4.17.21",
     "morgan": "^1.10.0",
-    "openid-client": "^6.1.7"
+    "openid-client": "^6.3.3"
   },
   "devDependencies": {
-    "prettier": "^3.5.0"
+    "prettier": "^3.5.3"
   },
   "packageManager": "npm@10.5.2+sha256.df0a1f7691654b94786013e5d5b80a873a7ffbae9c82c3bec8b5db76bc3b7dfd",
   "engines": {
