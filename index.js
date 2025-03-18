@@ -215,7 +215,11 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
 		req.session.idtoken = claims;
 		req.session.id_token_hint = tokens.id_token;
 		req.session.oauth2token = tokens;
-		res.redirect("/account-security");
+		if (claims.amr.includes("mfa")) {
+			res.redirect("/");
+		} else {
+			res.redirect("/account-security");
+		}
 	} catch (e) {
 		console.error(e);
 		next(e);
