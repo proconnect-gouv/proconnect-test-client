@@ -98,3 +98,19 @@
 	justify-content: center !important;
 	width: 100% !important;
 }
+
+.pc-background-alt-blue-france {
+	background-color: #f5f5fe;
+}
+
+.pc-background-white {
+	background-color: white !important;
+}
+
+.pc-blue-france {
+	color: #000091 !important;
+}
+
+.tag-active {
+	background-color: #adadf9 !important; /* Bleu France */
+}
