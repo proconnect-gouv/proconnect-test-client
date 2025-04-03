@@ -15,9 +15,9 @@ app.use(
     name: "pc_session",
     secret: process.env.SESSION_SECRET,
     rolling: true,
-  }),
+  })
 );
-app.enable('trust proxy');
+app.enable("trust proxy");
 app.use(morgan("combined"));
 
 const objToUrlParams = (obj) =>
@@ -25,13 +25,16 @@ const objToUrlParams = (obj) =>
     chain(obj)
       .omitBy((v) => !v)
       .mapValues((o) => (isObject(o) ? JSON.stringify(o) : o))
-      .value(),
+      .value()
   );
 
 const getCurrentUrl = (req) =>
   new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
 
-const configOptions = process.env.IS_HTTP_PROTOCOL_FORBIDDEN === "True" ? undefined : {execute: [client.allowInsecureRequests]}
+const configOptions =
+  process.env.IS_HTTP_PROTOCOL_FORBIDDEN === "True"
+    ? undefined
+    : { execute: [client.allowInsecureRequests] };
 
 const getProviderConfig = async () => {
   const config = await client.discovery(
@@ -41,12 +44,11 @@ const getProviderConfig = async () => {
       id_token_signed_response_alg: process.env.PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
       userinfo_signed_response_alg:
         process.env.PC_USERINFO_SIGNED_RESPONSE_ALG || null,
-      
     },
     client.ClientSecretPost(process.env.PC_CLIENT_SECRET),
     configOptions
   );
-  return config
+  return config;
 };
 
 const AUTHORIZATION_DEFAULT_PARAMS = {
@@ -96,7 +98,7 @@ const getAuthorizationControllerFactory = (extraParams) => {
           state,
           ...AUTHORIZATION_DEFAULT_PARAMS,
           ...extraParams,
-        }),
+        })
       );
 
       res.redirect(redirectUrl);
@@ -112,14 +114,14 @@ app.post(
   "/select-organization",
   getAuthorizationControllerFactory({
     prompt: "select_organization",
-  }),
+  })
 );
 
 app.post(
   "/update-userinfo",
   getAuthorizationControllerFactory({
     prompt: "update_userinfo",
-  }),
+  })
 );
 
 app.post(
@@ -134,7 +136,7 @@ app.post(
     prompt: "login",
     // alternatively, you can use the 'max_age: 0'
     // if so, claims parameter is not necessary as auth_time will be returned
-  }),
+  })
 );
 
 app.post(
@@ -146,7 +148,22 @@ app.post(
         acr: { essential: true, value: process.env.ACR_VALUE_FOR_2FA },
       },
     },
-  }),
+  })
+);
+
+app.post(
+  "/force-certification-dirigeant",
+  getAuthorizationControllerFactory({
+    claims: {
+      id_token: {
+        amr: { essential: true },
+        acr: {
+          essential: true,
+          value: process.env.ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+        },
+      },
+    },
+  })
 );
 
 app.post(
@@ -156,17 +173,22 @@ app.post(
     const customParams = JSON.parse(req.body["custom-params"]);
 
     return getAuthorizationControllerFactory(customParams)(req, res, next);
-  },
+  }
 );
 
 app.get(process.env.CALLBACK_URL, async (req, res, next) => {
   try {
     const config = await getProviderConfig();
     const currentUrl = getCurrentUrl(req);
-    const tokens = await client.authorizationCodeGrant(config, currentUrl, {
-      expectedNonce: req.session.nonce,
-      expectedState: req.session.state,
-    }, configOptions);
+    const tokens = await client.authorizationCodeGrant(
+      config,
+      currentUrl,
+      {
+        expectedNonce: req.session.nonce,
+        expectedState: req.session.state,
+      },
+      configOptions
+    );
 
     req.session.nonce = null;
     req.session.state = null;
@@ -182,7 +204,7 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
     req.session.oauth2token = tokens;
     res.redirect("/");
   } catch (e) {
-    console.error(e)
+    console.error(e);
     next(e);
   }
 });
@@ -197,7 +219,7 @@ app.post("/logout", async (req, res, next) => {
       objToUrlParams({
         post_logout_redirect_uri: `${process.env.HOST}/`,
         id_token_hint,
-      }),
+      })
     );
 
     res.redirect(redirectUrl);
