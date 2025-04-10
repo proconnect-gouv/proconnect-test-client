@@ -1,10 +1,14 @@
-import "dotenv/config";
+import dotenvFlow from "dotenv-flow";
 import express from "express";
 import * as client from "openid-client";
 import session from "express-session";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import { chain, isObject } from "lodash-es";
+
+dotenvFlow.config({
+  default_node_env: "development",
+});
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const app = express();
