@@ -19,7 +19,7 @@ app.use(
     name: "pc_session",
     secret: process.env.SESSION_SECRET,
     rolling: true,
-  })
+  }),
 );
 app.enable("trust proxy");
 app.use(morgan("combined"));
@@ -29,7 +29,7 @@ const objToUrlParams = (obj) =>
     chain(obj)
       .omitBy((v) => !v)
       .mapValues((o) => (isObject(o) ? JSON.stringify(o) : o))
-      .value()
+      .value(),
   );
 
 const getCurrentUrl = (req) =>
@@ -50,7 +50,7 @@ const getProviderConfig = async () => {
         process.env.PC_USERINFO_SIGNED_RESPONSE_ALG || null,
     },
     client.ClientSecretPost(process.env.PC_CLIENT_SECRET),
-    configOptions
+    configOptions,
   );
   return config;
 };
@@ -102,7 +102,7 @@ const getAuthorizationControllerFactory = (extraParams) => {
           state,
           ...AUTHORIZATION_DEFAULT_PARAMS,
           ...extraParams,
-        })
+        }),
       );
 
       res.redirect(redirectUrl);
@@ -118,14 +118,14 @@ app.post(
   "/select-organization",
   getAuthorizationControllerFactory({
     prompt: "select_organization",
-  })
+  }),
 );
 
 app.post(
   "/update-userinfo",
   getAuthorizationControllerFactory({
     prompt: "update_userinfo",
-  })
+  }),
 );
 
 app.post(
@@ -140,7 +140,7 @@ app.post(
     prompt: "login",
     // alternatively, you can use the 'max_age: 0'
     // if so, claims parameter is not necessary as auth_time will be returned
-  })
+  }),
 );
 
 app.post(
@@ -152,7 +152,7 @@ app.post(
         acr: { essential: true, value: process.env.ACR_VALUE_FOR_2FA },
       },
     },
-  })
+  }),
 );
 
 app.post(
@@ -167,7 +167,7 @@ app.post(
         },
       },
     },
-  })
+  }),
 );
 
 app.post(
@@ -177,13 +177,21 @@ app.post(
     const customParams = JSON.parse(req.body["custom-params"]);
 
     return getAuthorizationControllerFactory(customParams)(req, res, next);
-  }
+  },
 );
 
 app.get(process.env.CALLBACK_URL, async (req, res, next) => {
   try {
-    const config = await getProviderConfig();
     const currentUrl = getCurrentUrl(req);
+    if (req.query.error) {
+      throw new client.AuthorizationResponseError(
+        `${req.query.error} - ${req.query.error_description}`,
+        { cause: currentUrl.searchParams },
+      );
+    }
+
+    const config = await getProviderConfig();
+
     const tokens = await client.authorizationCodeGrant(
       config,
       currentUrl,
@@ -191,7 +199,7 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
         expectedNonce: req.session.nonce,
         expectedState: req.session.state,
       },
-      configOptions
+      configOptions,
     );
 
     req.session.nonce = null;
@@ -201,14 +209,13 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
       config,
       tokens.access_token,
       claims.sub,
-      configOptions
+      configOptions,
     );
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
     req.session.oauth2token = tokens;
     res.redirect("/");
   } catch (e) {
-    console.error(e);
     next(e);
   }
 });
@@ -223,13 +230,29 @@ app.post("/logout", async (req, res, next) => {
       objToUrlParams({
         post_logout_redirect_uri: `${process.env.HOST}/`,
         id_token_hint,
-      })
+      }),
     );
 
     res.redirect(redirectUrl);
   } catch (e) {
     next(e);
   }
+});
+
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  console.error(err);
+
+  res.status(500);
+  return res.render("error", {
+    error_description: err.message,
+    error: err.name,
+    stylesheet_url: process.env.STYLESHEET_URL,
+    title: process.env.SITE_TITLE,
+  });
 });
 
 app.listen(port, () => {

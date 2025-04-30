@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="fr-FR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title><%= locals.title %> - ProConnect</title>
+    <link rel="stylesheet" href="<%= locals.stylesheet_url %>" />
+  </head>
+  <body>
+    <main>
+      <h1><%= locals.title %></h1>
+      <h2>Erreur <code><%= error %></code></h2>
+      <blockquote><%= error_description %></blockquote>
+      <a href="/">Retour à l’accueil</a>
+    </main>
+  </body>
+</html>
