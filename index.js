@@ -251,7 +251,7 @@ app.use((err, req, res, next) => {
     error_description: err.message,
     error: err.name,
     stylesheet_url: process.env.STYLESHEET_URL,
-    title: process.env.SITE_TITLE,
+    title: `Error - ${process.env.SITE_TITLE}`,
   });
 });
 
