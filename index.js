@@ -85,7 +85,8 @@ app.get("/", async (req, res, next) => {
   }
 });
 
-const getAuthorizationControllerFactory = (extraParams) => {
+const getAuthorizationControllerFactory = (params, options) => {
+  const shouldReplaceDefaultParams = !!options?.shouldReplaceDefaultParams;
   return async (req, res, next) => {
     try {
       const config = await getProviderConfig();
@@ -95,13 +96,16 @@ const getAuthorizationControllerFactory = (extraParams) => {
       req.session.state = state;
       req.session.nonce = nonce;
 
+      const computedParams = shouldReplaceDefaultParams
+        ? params
+        : { ...AUTHORIZATION_DEFAULT_PARAMS, params };
+
       const redirectUrl = client.buildAuthorizationUrl(
         config,
         objToUrlParams({
           nonce,
           state,
-          ...AUTHORIZATION_DEFAULT_PARAMS,
-          ...extraParams,
+          ...computedParams,
         }),
       );
 
@@ -176,7 +180,9 @@ app.post(
   (req, res, next) => {
     const customParams = JSON.parse(req.body["custom-params"]);
 
-    return getAuthorizationControllerFactory(customParams)(req, res, next);
+    return getAuthorizationControllerFactory(customParams, {
+      shouldReplaceDefaultParams: true,
+    })(req, res, next);
   },
 );
 
