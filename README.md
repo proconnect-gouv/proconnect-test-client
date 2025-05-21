@@ -1,6 +1,6 @@
 # ProConnect Test Client
 
-testing https://github.com/numerique-gouv/proconnect-identite/pull/1020
+testing https://github.com/numerique-gouv/proconnect-identite/pull/1236
 
 This is a minimal, nodeJS-based ProConnect client, to be used for end-to-end testing.
 
