@@ -98,7 +98,7 @@ const getAuthorizationControllerFactory = (params, options) => {
 
       const computedParams = shouldReplaceDefaultParams
         ? params
-        : { ...AUTHORIZATION_DEFAULT_PARAMS, params };
+        : { ...AUTHORIZATION_DEFAULT_PARAMS, ...params };
 
       const redirectUrl = client.buildAuthorizationUrl(
         config,
