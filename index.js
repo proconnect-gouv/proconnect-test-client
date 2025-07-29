@@ -106,9 +106,11 @@ const getAuthorizationControllerFactory = (params, options) => {
           nonce,
           state,
           ...computedParams,
+          ...(process.env.EXTRA_PARAM_SP_NAME && {
+            sp_name: process.env.EXTRA_PARAM_SP_NAME,
+          }),
         }),
       );
-
       res.redirect(redirectUrl);
     } catch (e) {
       next(e);
