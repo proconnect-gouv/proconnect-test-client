@@ -15,7 +15,7 @@ This tool is fully configured using environment variables.
 Pull the image:
 
 ```
-docker pull ghcr.io/numerique-gouv/proconnect-test-client
+docker pull ghcr.io/proconnect-gouv/proconnect-test-client
 ```
 
 Run the container:
@@ -24,7 +24,7 @@ Run the container:
 docker run --rm \
 -p 3000:3000 \
 -e PORT=3000 \
-ghcr.io/numerique-gouv/proconnect-test-client
+ghcr.io/proconnect-gouv/proconnect-test-client
 ```
 
 ## Run it with Docker Compose
@@ -36,7 +36,7 @@ version: "3.5"
 
 services:
   proconnect-test-client:
-    image: numerique-gouv/proconnect-test-client
+    image: proconnect-gouv/proconnect-test-client
     ports:
       - 3000:3000
     environment:
@@ -79,7 +79,7 @@ logout_callbacks: ["http://localhost:3000/"]
 authorized_scopes: openid email profile organization
 ```
 
-More clients are available at: https://github.com/numerique-gouv/moncomptepro/blob/master/scripts/fixtures.sql
+More clients are available at: https://github.com/proconnect-gouv/moncomptepro/blob/master/scripts/fixtures.sql
 
 ## Run Cypress test
 
