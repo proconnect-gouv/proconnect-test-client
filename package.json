@@ -2,13 +2,13 @@
   "name": "proconnect-test-client",
   "version": "1.0.0",
   "description": "This is a minimal, nodeJS-based ProConnect client, to be used for end-to-end testing.",
-  "homepage": "https://github.com/numerique-gouv/proconnect-test-client#readme",
+  "homepage": "https://github.com/proconnect-gouv/proconnect-test-client#readme",
   "bugs": {
-    "url": "https://github.com/numerique-gouv/proconnect-test-client/issues"
+    "url": "https://github.com/proconnect-gouv/proconnect-test-client/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numerique-gouv/proconnect-test-client.git"
+    "url": "git+https://github.com/proconnect-gouv/proconnect-test-client.git"
   },
   "license": "AGPL-3.0",
   "author": "",
