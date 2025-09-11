@@ -150,12 +150,30 @@ app.post(
 );
 
 app.post(
-  "/force-2fa",
+  "/force-consistency-checked-2fa",
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
         amr: { essential: true },
-        acr: { essential: true, value: process.env.ACR_VALUE_FOR_2FA },
+        acr: {
+          essential: true,
+          value: process.env.ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+        },
+      },
+    },
+  }),
+);
+
+app.post(
+  "/force-self-asserted-2fa",
+  getAuthorizationControllerFactory({
+    claims: {
+      id_token: {
+        amr: { essential: true },
+        acr: {
+          essential: true,
+          value: process.env.ACR_VALUE_FOR_SELF_ASSERTED_2FA,
+        },
       },
     },
   }),
@@ -166,7 +184,6 @@ app.post(
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
-        amr: { essential: true },
         acr: {
           essential: true,
           value: process.env.ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
