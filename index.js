@@ -155,7 +155,15 @@ app.post(
     claims: {
       id_token: {
         amr: { essential: true },
-        acr: { essential: true, value: process.env.ACR_VALUE_FOR_2FA },
+        acr: {
+          essential: true,
+          values: [
+            process.env.ACR_VALUE_FOR_EIDAS2,
+            process.env.ACR_VALUE_FOR_EIDAS3,
+            process.env.ACR_VALUE_FOR_SELF_ASSERTED_2FA,
+            process.env.ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+          ],
+        },
       },
     },
   }),
@@ -166,7 +174,6 @@ app.post(
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
-        amr: { essential: true },
         acr: {
           essential: true,
           value: process.env.ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
