@@ -16,6 +16,12 @@ updates:
     versioning-strategy: increase
   - package-ecosystem: "npm"
     directory: "/e2e"
+    groups:
+      cypress:
+        patterns:
+          - "@bahmutov/cypress-esbuild-preprocessor""
+          - "@bahmutov/cypress-esbuild-preprocessor"
+          - "cypress"
     labels:
       - dependencies
     schedule:
