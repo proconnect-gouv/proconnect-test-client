@@ -19,7 +19,7 @@ updates:
     groups:
       cypress:
         patterns:
-          - "@bahmutov/cypress-esbuild-preprocessor""
+          - "@bahmutov/cypress-esbuild-preprocessor"
           - "@bahmutov/cypress-esbuild-preprocessor"
           - "cypress"
     labels:
