@@ -79,7 +79,7 @@ logout_callbacks: ["http://localhost:3000/"]
 authorized_scopes: openid email profile organization
 ```
 
-More clients are available at: https://github.com/proconnect-gouv/moncomptepro/blob/master/scripts/fixtures.sql
+More clients are available at: https://github.com/proconnect-gouv/moncomptepro/blob/main/scripts/fixtures.sql
 
 ## Run Cypress test
 
