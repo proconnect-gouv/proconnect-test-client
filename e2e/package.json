@@ -6,7 +6,7 @@
     "test": "cypress run"
   },
   "devDependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^23.0.0",
+    "@badeball/cypress-cucumber-preprocessor": "^23.2.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.6",
     "cypress": "^15.1.0",
     "typescript": "^5.9.2"
