@@ -4,7 +4,6 @@ import expressLayouts from "express-ejs-layouts";
 import * as client from "openid-client";
 import session from "express-session";
 import morgan from "morgan";
-import bodyParser from "body-parser";
 import { chain, isObject } from "lodash-es";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -203,25 +202,8 @@ const getAuthorizationControllerFactory = (extraParams) => {
   };
 };
 
-app.post("/login", getAuthorizationControllerFactory());
-
 app.post(
-  "/force-login",
-  getAuthorizationControllerFactory({
-    claims: {
-      id_token: {
-        amr: { essential: true },
-        auth_time: { essential: true },
-      },
-    },
-    prompt: "login",
-    // alternatively, you can use the 'max_age: 0'
-    // if so, claims parameter is not necessary as auth_time will be returned
-  })
-);
-
-app.post(
-  "/force-2fa",
+  "/login",
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
@@ -238,16 +220,6 @@ app.post(
       },
     },
   })
-);
-
-app.post(
-  "/custom-connection",
-  bodyParser.urlencoded({ extended: false }),
-  (req, res, next) => {
-    const customParams = JSON.parse(req.body["custom-params"]);
-
-    return getAuthorizationControllerFactory(customParams)(req, res, next);
-  }
 );
 
 app.get(CALLBACK_URL, async (req, res, next) => {

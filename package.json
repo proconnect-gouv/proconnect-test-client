@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@gouvfr/dsfr": "1.14.2",
-    "body-parser": "2.2.0",
     "dotenv-flow": "4.1.0",
     "ejs": "3.1.10",
     "express": "5.1.0",
