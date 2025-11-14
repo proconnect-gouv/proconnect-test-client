@@ -18,6 +18,7 @@ dotenv_flow.config({
 
 const {
   ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+  ACR_VALUE_FOR_SELF_ASSERTED_2FA,
   ACR_VALUES,
   CALLBACK_URL,
   HOST,
@@ -36,6 +37,7 @@ const {
 } = z
   .object({
     ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA: z.string(),
+    ACR_VALUE_FOR_SELF_ASSERTED_2FA: z.string(),
     ACR_VALUES: z
       .string()
       .transform((v) => v.split(","))
@@ -224,7 +226,15 @@ app.post(
     claims: {
       id_token: {
         amr: { essential: true },
-        acr: { essential: false, value: ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA },
+        acr: {
+          essential: true,
+          value: [
+            "eidas2",
+            "eidas3",
+            ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+            ACR_VALUE_FOR_SELF_ASSERTED_2FA,
+          ],
+        },
       },
     },
   })
