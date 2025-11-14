@@ -210,7 +210,7 @@ app.post(
     claims: {
       id_token: {
         amr: { essential: true },
-        acr: { essential: true, value: ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA },
+        acr: { essential: false, value: ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA },
       },
     },
   })
@@ -250,10 +250,6 @@ app.get(CALLBACK_URL, async (req, res, next) => {
       configOptions
     );
 
-    console.trace({
-      claims,
-      userInfo: req.session.userinfo,
-    });
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
     req.session.oauth2token = tokens;
