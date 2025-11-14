@@ -16,9 +16,8 @@ const app = express();
 
 app.set("view engine", "ejs");
 app.use(
-  session({
+  session(process.env.SESSION_SECRET, {
     name: "pc_session",
-    secret: process.env.SESSION_SECRET,
     rolling: true,
     resave: false,
     saveUninitialized: false,
