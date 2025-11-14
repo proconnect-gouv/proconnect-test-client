@@ -18,6 +18,12 @@ app.use(
     name: "pc_session",
     secret: process.env.SESSION_SECRET,
     rolling: true,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    },
   }),
   expressLayouts
 );
