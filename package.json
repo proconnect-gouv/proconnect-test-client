@@ -15,27 +15,29 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node .",
+    "dev": "tsx --watch .",
+    "start": "tsx .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@gouvfr/dsfr": "^1.13.0",
-    "body-parser": "^1.20.3",
-    "dotenv": "^16.4.7",
-    "ejs": "^3.1.10",
-    "express": "^4.21.2",
-    "express-ejs-layouts": "^2.5.1",
-    "express-session": "^1.18.1",
-    "lodash-es": "^4.17.21",
-    "morgan": "^1.10.0",
-    "openid-client": "^6.3.3"
+    "@gouvfr/dsfr": "1.14.2",
+    "body-parser": "1.20.3",
+    "dotenv": "16.4.7",
+    "ejs": "3.1.10",
+    "express": "4.21.2",
+    "express-ejs-layouts": "2.5.1",
+    "express-session": "1.18.2",
+    "lodash-es": "4.17.21",
+    "morgan": "1.10.1",
+    "openid-client": "6.8.1",
+    "tsx": "4.20.6"
   },
   "devDependencies": {
-    "prettier": "^3.5.3"
+    "prettier": "3.6.2"
   },
-  "packageManager": "npm@10.5.2+sha256.df0a1f7691654b94786013e5d5b80a873a7ffbae9c82c3bec8b5db76bc3b7dfd",
+  "packageManager": "npm@11.6.2+sha512.ee22b335fcbc95662cdf3ab8a053daf045d9cf9c6df6040d28965abb707512b2c16fa6c5eec049d34c74f78f390cebd14f697919eadb97756564d4f9eccc4954",
   "engines": {
-    "node": "20",
-    "npm": ">=10"
+    "node": "24",
+    "npm": ">=11"
   }
 }
