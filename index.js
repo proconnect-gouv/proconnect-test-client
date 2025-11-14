@@ -1,4 +1,4 @@
-import "dotenv/config";
+import dotenv_flow from "dotenv-flow";
 import express from "express";
 import expressLayouts from "express-ejs-layouts";
 import * as client from "openid-client";
@@ -8,6 +8,8 @@ import bodyParser from "body-parser";
 import { chain, isObject } from "lodash-es";
 import path from "path";
 import { fileURLToPath } from "url";
+
+dotenv_flow.config();
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const app = express();
