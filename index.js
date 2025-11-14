@@ -8,28 +8,76 @@ import bodyParser from "body-parser";
 import { chain, isObject } from "lodash-es";
 import path from "path";
 import { fileURLToPath } from "url";
+import { z } from "zod/v4";
 
-dotenv_flow.config();
+//
 
-const port = parseInt(process.env.PORT, 10) || 3000;
+dotenv_flow.config({
+  default_node_env: "development",
+});
+
+const {
+  ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+  ACR_VALUES,
+  CALLBACK_URL,
+  IS_HTTP_PROTOCOL_FORBIDDEN,
+  LOGIN_HINT,
+  NODE_ENV,
+  HOST,
+  PC_CLIENT_ID,
+  PC_CLIENT_SECRET,
+  PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
+  PC_PROVIDER,
+  PC_SCOPES,
+  PC_USERINFO_SIGNED_RESPONSE_ALG,
+  PORT,
+  SITE_TITLE,
+  SESSION_SECRET,
+} = z
+  .object({
+    ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA: z.string(),
+    ACR_VALUES: z
+      .string()
+      .transform((v) => v.split(","))
+      .default(null),
+    CALLBACK_URL: z.string(),
+    SITE_TITLE: z.string(),
+    HOST: z.string(),
+    IS_HTTP_PROTOCOL_FORBIDDEN: z.enum(["True", "False"]).default("True"),
+    LOGIN_HINT: z.string(),
+    NODE_ENV: z.enum(["development", "production"]).default("development"),
+    PC_CLIENT_ID: z.string().min(1),
+    PC_CLIENT_SECRET: z.string().min(1),
+    PC_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string(),
+    PC_PROVIDER: z.url(),
+    PC_SCOPES: z.string(),
+    PC_USERINFO_SIGNED_RESPONSE_ALG: z.string(),
+    PORT: z.coerce.number().int().min(80).max(65535).default(3000),
+    SESSION_SECRET: z.string().min(1).max(100),
+  })
+  .parse(process.env);
+
+//
+
 const app = express();
 
 app.set("view engine", "ejs");
+app.set("trust proxy", 1);
+
 app.use(
-  session(process.env.SESSION_SECRET, {
+  session({
     name: "pc_session",
-    rolling: true,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
+    secret: SESSION_SECRET,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
+      secure: NODE_ENV === "production",
       sameSite: "lax",
     },
-  }),
-  expressLayouts
+  })
 );
+app.use(expressLayouts);
 app.set("layout", "pages/main");
-app.enable("trust proxy");
 app.use(morgan("combined"));
 
 app.use(express.static("public"));
@@ -52,37 +100,36 @@ const getCurrentUrl = (req) =>
   new URL(`${req.protocol}://${req.get("host")}${req.originalUrl}`);
 
 const configOptions =
-  process.env.IS_HTTP_PROTOCOL_FORBIDDEN === "True"
+  IS_HTTP_PROTOCOL_FORBIDDEN === "True"
     ? undefined
     : { execute: [client.allowInsecureRequests] };
 
 const getProviderConfig = async () => {
   const config = await client.discovery(
-    new URL(process.env.PC_PROVIDER),
-    process.env.PC_CLIENT_ID,
+    new URL(PC_PROVIDER),
+    PC_CLIENT_ID,
     {
-      id_token_signed_response_alg: process.env.PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
-      userinfo_signed_response_alg:
-        process.env.PC_USERINFO_SIGNED_RESPONSE_ALG || null,
+      id_token_signed_response_alg: PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
+      userinfo_signed_response_alg: PC_USERINFO_SIGNED_RESPONSE_ALG || null,
     },
-    client.ClientSecretPost(process.env.PC_CLIENT_SECRET),
+    client.ClientSecretPost(PC_CLIENT_SECRET),
     configOptions
   );
   return config;
 };
 
 const AUTHORIZATION_DEFAULT_PARAMS = {
-  redirect_uri: `${process.env.HOST}${process.env.CALLBACK_URL}`,
-  scope: process.env.PC_SCOPES,
-  login_hint: process.env.LOGIN_HINT || null,
-  acr_values: process.env.ACR_VALUES ? process.env.ACR_VALUES.split(",") : null,
+  redirect_uri: `${HOST}${CALLBACK_URL}`,
+  scope: PC_SCOPES,
+  login_hint: LOGIN_HINT || null,
+  acr_values: ACR_VALUES,
   claims: { id_token: { amr: { essential: true } } },
 };
 
 app.get("/", async (req, res, next) => {
   try {
     res.render("pages/index", {
-      title: process.env.SITE_TITLE,
+      title: SITE_TITLE,
       userinfo: JSON.stringify(req.session.userinfo, null, 2),
       idtoken: JSON.stringify(req.session.idtoken, null, 2),
       oauth2token: JSON.stringify(req.session.oauth2token, null, 2),
@@ -143,16 +190,6 @@ const getAuthorizationControllerFactory = (extraParams) => {
 app.post("/login", getAuthorizationControllerFactory());
 
 app.post(
-  "/select-organization",
-  getAuthorizationControllerFactory({ prompt: "select_organization" })
-);
-
-app.post(
-  "/update-userinfo",
-  getAuthorizationControllerFactory({ prompt: "update_userinfo" })
-);
-
-app.post(
   "/force-login",
   getAuthorizationControllerFactory({
     claims: {
@@ -173,7 +210,7 @@ app.post(
     claims: {
       id_token: {
         amr: { essential: true },
-        acr: { essential: true, value: process.env.ACR_VALUE_FOR_2FA },
+        acr: { essential: true, value: ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA },
       },
     },
   })
@@ -189,19 +226,10 @@ app.post(
   }
 );
 
-app.get(process.env.CALLBACK_URL, async (req, res, next) => {
+app.get(CALLBACK_URL, async (req, res, next) => {
   try {
     const config = await getProviderConfig();
     const currentUrl = getCurrentUrl(req);
-    console.trace({
-      config,
-      currentUrl,
-      checks: {
-        expectedNonce: req.session.nonce,
-        expectedState: req.session.state,
-      },
-      configOptions,
-    });
     const tokens = await client.authorizationCodeGrant(
       config,
       currentUrl,
@@ -221,6 +249,11 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
       claims.sub,
       configOptions
     );
+
+    console.trace({
+      claims,
+      userInfo: req.session.userinfo,
+    });
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
     req.session.oauth2token = tokens;
@@ -243,7 +276,7 @@ app.get("/logout", async (req, res, next) => {
     const redirectUrl = client.buildEndSessionUrl(
       config,
       objToUrlParams({
-        post_logout_redirect_uri: `${process.env.HOST}/`,
+        post_logout_redirect_uri: `${HOST}/`,
         id_token_hint,
       })
     );
@@ -254,6 +287,6 @@ app.get("/logout", async (req, res, next) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`App listening on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`App listening on http://localhost:${PORT}`);
 });

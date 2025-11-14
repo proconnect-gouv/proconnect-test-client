@@ -52,7 +52,7 @@
 						</h3>
 						<ul>
 							<li>
-								<strong><%= userinfo["family_name"] %> <%= userinfo["given_name"] %></strong>
+								<strong><%= userinfo["usual_name"] %> <%= userinfo["given_name"] %></strong>
 							</li>
 							<li>
 								<%= userinfo["email"] %>
@@ -60,13 +60,11 @@
 							<li>
 								<%= userinfo["job"] %>
 							</li>
+							<li>
+								<%= userinfo["idp_id"] %>
+							</li>
 						</ul>
 					</div>
-					<form action="/update-userinfo" method="post">
-						<button name="button" type="submit" id="update-userinfo" class="fr-btn fr-mt-2w"> 
-							Mettre à jour mes informations
-						</button>
-					</form>
 				</div>
 			</div>
 			<div class="fr-col-12 fr-col-lg-6">
@@ -84,9 +82,6 @@
 							</li>
 						</ul>
 					</div>
-					<form action="/select-organization" method="post">
-						<button class="fr-btn fr-mt-2w" id="select-organization">Changer d’organisation</button>
-					</form>
 				</div>
 			</div>
 			
