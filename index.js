@@ -228,7 +228,7 @@ app.get(process.env.CALLBACK_URL, async (req, res, next) => {
   }
 });
 
-app.post("/logout", async (req, res, next) => {
+app.get("/logout", async (req, res, next) => {
   try {
     const id_token_hint = req.session.id_token_hint;
     req.session.destroy();
