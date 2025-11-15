@@ -197,16 +197,6 @@ const getAuthorizationControllerFactory = (extraParams) => {
           ...extraParams,
         })
       );
-      console.dir(
-        {
-          redirectUrl,
-          nonce,
-          state,
-          AUTHORIZATION_DEFAULT_PARAMS,
-          extraParams,
-        },
-        { depth: Infinity }
-      );
 
       res.redirect(redirectUrl);
     } catch (e) {
@@ -268,8 +258,6 @@ app.get(CALLBACK_URL, async (req, res, next) => {
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
     req.session.oauth2token = tokens;
-    console.dir(tokens, { depth: 6 });
-    console.dir(claims, { depth: 6 });
     if (claims.amr.includes("mfa")) {
       res.redirect("/");
     } else {
