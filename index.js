@@ -16,7 +16,11 @@ dotenv_flow.config({
 });
 
 const {
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT_2FA,
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
   ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+  ACR_VALUE_FOR_EIDAS2,
+  ACR_VALUE_FOR_EIDAS3,
   ACR_VALUE_FOR_SELF_ASSERTED_2FA,
   ACR_VALUES,
   CALLBACK_URL,
@@ -36,7 +40,11 @@ const {
   SITE_TITLE,
 } = z
   .object({
+    ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT_2FA: z.string(),
+    ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: z.string(),
     ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA: z.string(),
+    ACR_VALUE_FOR_EIDAS2: z.string(),
+    ACR_VALUE_FOR_EIDAS3: z.string(),
     ACR_VALUE_FOR_SELF_ASSERTED_2FA: z.string(),
     ACR_VALUES: z
       .string()
@@ -61,7 +69,10 @@ const {
   .parse(process.env);
 
 console.table({
+  ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
   ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+  ACR_VALUE_FOR_EIDAS2,
+  ACR_VALUE_FOR_EIDAS3,
   ACR_VALUES,
   CALLBACK_URL,
   EXTRA_PARAM_SP_NAME,
@@ -148,30 +159,8 @@ app.get("/", async (req, res, next) => {
   try {
     res.render("pages/index", {
       title: SITE_TITLE,
-      userinfo: JSON.stringify(req.session.userinfo, null, 2),
-      idtoken: JSON.stringify(req.session.idtoken, null, 2),
-      oauth2token: JSON.stringify(req.session.oauth2token, null, 2),
-      defaultParamsValue: JSON.stringify(AUTHORIZATION_DEFAULT_PARAMS, null, 2),
-    });
-  } catch (e) {
-    next(e);
-  }
-});
-
-app.get("/account-security", async (req, res, next) => {
-  try {
-    res.render("pages/account-security", {
-      title: "Renforcer la sécurité",
-    });
-  } catch (e) {
-    next(e);
-  }
-});
-
-app.get("/2fa", async (req, res, next) => {
-  try {
-    res.render("pages/configuring-2fa", {
-      title: "Configurer la 2FA",
+      userinfo: req.session.userinfo,
+      idtoken: req.session.idtoken,
     });
   } catch (e) {
     next(e);
@@ -210,16 +199,45 @@ app.post(
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
+        amr: { essential: true },
+        auth_time: { essential: true },
+      },
+    },
+  }),
+);
+
+app.post(
+  "/force-2fa",
+  getAuthorizationControllerFactory({
+    claims: {
+      id_token: {
+        amr: { essential: true },
         acr: {
           essential: true,
           values: [
-            "eidas2",
-            "eidas3",
+            ACR_VALUE_FOR_EIDAS2,
+            ACR_VALUE_FOR_EIDAS3,
             ACR_VALUE_FOR_SELF_ASSERTED_2FA,
             ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
           ],
         },
-        amr: { essential: true },
+      },
+    },
+  }),
+);
+
+app.post(
+  "/force-certification-dirigeant",
+  getAuthorizationControllerFactory({
+    claims: {
+      id_token: {
+        acr: {
+          essential: true,
+          values: [
+            ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT,
+            ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT_2FA,
+          ],
+        },
       },
     },
   }),
@@ -258,11 +276,7 @@ app.get(CALLBACK_URL, async (req, res, next) => {
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
     req.session.oauth2token = tokens;
-    if (claims.amr.includes("mfa")) {
-      res.redirect("/");
-    } else {
-      res.redirect("/account-security");
-    }
+    res.redirect("/");
   } catch (e) {
     next(e);
   }

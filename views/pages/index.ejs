@@ -10,59 +10,162 @@
 				/>
 			</div>
 			<div class="fr-col-sm-12 fr-col-md-7">
-				<h1>Bienvenue sur DataPass !</h1>
+				<h1>Bienvenue chez le Dr. Proconnect !</h1>
 				<p>
-					DataPass, c’est le service qui vous permet de profiter
-					facilement d’habilitations conformes entre
-					administrations et d’accéder à des données et services
-					en accès restreint.
-				</p>
-				<div class="fr-h6">
-					Pour suivre vos demandes d'habilitation
-				</div>
-				<form action="/login" method="post">
-					<button class="proconnect-button">
-						<span class="proconnect-sr-only"
-							>S’identifier avec ProConnect</span
-						>
-					</button>
-				</form>
-				<p>
-					<a
-						href="https://www.proconnect.gouv.fr/"
-						target="_blank"
-						rel="noopener noreferrer"
-						title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
-					>
-						Qu’est-ce que ProConnect ?
-					</a>
+					Le docteur Proconnect, c'est le service qui vous permet de d'accéder à
+          vos données de connexion à travers les différents connexion possible.
+          C'est un moyen facile de tester des parcours de connexion en tant que usager et 
+          de comprendre lesquels sont les données transmises à nos partenaires.
 				</p>
 			</div>
+    </div>
+
+    <!-- -->
+    
+    <div class="fr-grid-row fr-grid-row--middle fr-my-5w">
+			<div class="fr-col-sm-12 fr-col-md-6">
+        <div class="fr-my-2w fr-mx-5w">
+          <h6 class="fr-h6">
+            Connexion standard
+          </h6>
+          <p>
+            Pour suivre vos connexions avec le niveau de sécurité standard.<br/>
+          </p>
+        </div>
+			</div>
+			<div class="fr-col-sm-12 fr-col-md-6">
+        <div class="fr-consent-placeholder">
+          <form action="/login" method="post">
+            <button class="proconnect-button">
+              <span class="proconnect-sr-only"
+                >S’identifier avec ProConnect</span
+              >
+            </button>
+          </form>
+          <p>
+            <a
+              href="https://www.proconnect.gouv.fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
+            >
+              Qu’est-ce que ProConnect ?
+            </a>
+          </p>
+        </div>
+			</div>
 		</div>
+      
+    <!-- -->
+    
+    <div class="fr-grid-row fr-grid-row--middle fr-my-5w">
+			<div class="fr-col-sm-12 fr-col-md-6">
+        <div class="fr-my-2w fr-mx-5w">
+          <h6 class="fr-h6">
+            <a target="_blank" href="https://proconnect.crisp.help/fr/article/quest-ce-que-la-double-authentification-1m5mpmj">
+              Connexion double authentification (2FA)
+            </a>
+          </h6>
+          <p>
+            En plus de votre mot de passe et de la vérification de l'adresse email, 
+            nous vous demanderons un code à usage unique ou une clé spécifique.
+          </p>
+        </div>
+			</div>
+			<div class="fr-col-sm-12 fr-col-md-6">
+        <div class="fr-consent-placeholder">
+          <form action="/force-2fa" method="post">
+            <button class="proconnect-button">
+              <span class="proconnect-sr-only"
+                >S’identifier avec ProConnect</span
+              >
+            </button>
+          </form>
+          <p>
+            <a
+              href="https://www.proconnect.gouv.fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
+            >
+              Qu’est-ce que ProConnect ?
+            </a>
+          </p>
+        </div>
+			</div>
+		</div>
+
+    <!-- -->
+    
+    <div class="fr-grid-row fr-grid-row--middle fr-my-5w">
+			<div class="fr-col-sm-12 fr-col-md-6">
+        <div class="fr-my-2w fr-mx-5w">
+          <h6 class="fr-h6">
+            <a target="_blank" href="https://partenaires.proconnect.gouv.fr/docs/fournisseur-service/certification-dirigeant">
+              Connexion avec certification dirigeant
+            </a>
+          </h6>
+          <p>
+            En plus de votre mot de passe et de la vérification de l'adresse email, 
+            nous vous demanderons de prouver le statut de dirigeant au sein de 
+            l'organisation sélectionné. 
+          </p>
+        </div>
+			</div>
+			<div class="fr-col-sm-12 fr-col-md-6">
+        <div class="fr-consent-placeholder">
+          <form action="/force-certification-dirigeant" method="post">
+            <button class="proconnect-button">
+              <span class="proconnect-sr-only"
+                >S’identifier avec ProConnect</span
+              >
+            </button>
+          </form>
+          <p>
+            <a
+              href="https://www.proconnect.gouv.fr/"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Qu’est-ce que ProConnect ? - nouvelle fenêtre"
+            >
+              Qu’est-ce que ProConnect ?
+            </a>
+          </p>
+        </div>
+			</div>
+		</div>
+
+    <!-- -->
 	<% } %>
 	<% if (locals.userinfo) { %>
 		<h1>Votre compte</h1>
-		<% userinfo = JSON.parse(locals.userinfo) %>
 		<div class="fr-grid-row fr-grid-row--gutters">
 			<div class="fr-col-12 fr-col-lg-6">
 				<div id="authorization_request_card_user_44597" class="fr-basic-card">
 					<div class="fr-col">
 						<h3>
-							Vous êtes
+							Vous êtes <strong><%= locals.userinfo.usual_name %> <%= locals.userinfo.given_name %></strong>
 						</h3>
 						<ul>
-							<li>
-								<strong><%= userinfo["usual_name"] %> <%= userinfo["given_name"] %></strong>
-							</li>
-							<li>
-								<%= userinfo["email"] %>
-							</li>
-							<li>
-								<%= userinfo["job"] %>
-							</li>
-							<li>
-								<%= userinfo["idp_id"] %>
-							</li>
+							<li>Nom usuel : <strong><%= locals.userinfo.usual_name %></strong></li>
+							<li>Prénom : <strong><%= locals.userinfo.given_name %></strong></li>
+							<li>Email : <strong><%= locals.userinfo.email %></strong></li>
+							<li>Profession : 
+                <% if (locals.userinfo.job) { %>
+                  <strong><%= locals.userinfo.job %></strong>
+                <% } else { %>
+                  <em>Non renseigné</em>
+                <% } %>
+              </li>
+              <li>Connexion établie le <strong><%= new Date(locals.userinfo.iat * 1000).toLocaleString() %></strong></li>
+              <li>Date d'expiration de la connexion le <strong><%= new Date(locals.userinfo.exp * 1000).toLocaleString() %></strong></li>
+              <li>Type de connexion :
+                <% if (locals.idtoken.amr) { %>
+                  <strong><%= locals.idtoken.amr.join(', ') %></strong>
+                <% } else { %>
+                  <em>Non renseigné</em>
+                <% } %>
+              </li>
 						</ul>
 					</div>
 				</div>
@@ -74,12 +177,15 @@
 							Organisation
 						</h3>
 						<ul>
-							<li>
-								<strong><%= userinfo["label"] %></strong>
-							</li>
-							<li>
-								<%= userinfo["siret"] %>
-							</li>
+							<li>Nom du fournisseur d'identité :
+                <% if (locals.userinfo.idp_name) { %>
+                  <strong><%= locals.userinfo.idp_name %></strong>
+                <% } else { %>
+                  <em>Non renseigné</em>
+                <% } %>
+              </li>
+							<li>Numéro d'identification du fournisseur d'identité : <strong><%= locals.userinfo.idp_id %></strong></li>
+							<li>SIRET : <strong><%= locals.userinfo.siret %></strong></li>
 						</ul>
 					</div>
 				</div>
