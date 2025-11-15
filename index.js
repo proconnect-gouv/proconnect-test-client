@@ -20,6 +20,7 @@ const {
   ACR_VALUE_FOR_SELF_ASSERTED_2FA,
   ACR_VALUES,
   CALLBACK_URL,
+  EXTRA_PARAM_SP_NAME,
   HOST,
   IS_HTTP_PROTOCOL_FORBIDDEN,
   LOGIN_HINT,
@@ -42,6 +43,7 @@ const {
       .transform((v) => v.split(","))
       .default(null),
     CALLBACK_URL: z.string(),
+    EXTRA_PARAM_SP_NAME: z.string(),
     SITE_TITLE: z.string(),
     HOST: z.string(),
     IS_HTTP_PROTOCOL_FORBIDDEN: z.enum(["True", "False"]).default("True"),
@@ -62,6 +64,7 @@ console.table({
   ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
   ACR_VALUES,
   CALLBACK_URL,
+  EXTRA_PARAM_SP_NAME,
   HOST,
   NODE_ENV,
   PC_CLIENT_ID,
@@ -137,8 +140,8 @@ const AUTHORIZATION_DEFAULT_PARAMS = {
   redirect_uri: `${HOST}${CALLBACK_URL}`,
   scope: PC_SCOPES,
   login_hint: LOGIN_HINT || null,
-  acr_values: ACR_VALUES,
   claims: { id_token: { amr: { essential: true } } },
+  sp_name: EXTRA_PARAM_SP_NAME,
 };
 
 app.get("/", async (req, res, next) => {
@@ -194,6 +197,16 @@ const getAuthorizationControllerFactory = (extraParams) => {
           ...extraParams,
         })
       );
+      console.dir(
+        {
+          redirectUrl,
+          nonce,
+          state,
+          AUTHORIZATION_DEFAULT_PARAMS,
+          extraParams,
+        },
+        { depth: Infinity }
+      );
 
       res.redirect(redirectUrl);
     } catch (e) {
@@ -207,16 +220,16 @@ app.post(
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
-        amr: { essential: true },
         acr: {
           essential: true,
-          value: [
+          values: [
             "eidas2",
             "eidas3",
-            ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
             ACR_VALUE_FOR_SELF_ASSERTED_2FA,
+            ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
           ],
         },
+        amr: { essential: true },
       },
     },
   })
@@ -224,6 +237,12 @@ app.post(
 
 app.get(CALLBACK_URL, async (req, res, next) => {
   try {
+    if (req.query.error) {
+      throw new client.AuthorizationResponseError(
+        `${req.query.error} - ${req.query.error_description}`,
+        { cause: currentUrl.searchParams }
+      );
+    }
     const config = await getProviderConfig();
     const currentUrl = getCurrentUrl(req);
     const tokens = await client.authorizationCodeGrant(
@@ -249,20 +268,26 @@ app.get(CALLBACK_URL, async (req, res, next) => {
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
     req.session.oauth2token = tokens;
+    console.dir(tokens, { depth: 6 });
+    console.dir(claims, { depth: 6 });
     if (claims.amr.includes("mfa")) {
       res.redirect("/");
     } else {
       res.redirect("/account-security");
     }
   } catch (e) {
-    console.error(e);
     next(e);
   }
 });
 
 app.get("/logout", async (req, res, next) => {
   try {
-    const id_token_hint = req.session.id_token_hint;
+    const id_token_hint = req.session?.id_token_hint;
+    if (!id_token_hint) {
+      req.session.destroy();
+      return res.redirect("/");
+    }
+
     req.session.destroy();
     const config = await getProviderConfig();
     const redirectUrl = client.buildEndSessionUrl(
@@ -277,6 +302,21 @@ app.get("/logout", async (req, res, next) => {
   } catch (e) {
     next(e);
   }
+});
+
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  console.dir(err, { depth: 6 });
+
+  res.status(500);
+  return res.render("pages/error", {
+    error_description: err.message,
+    error: err.name,
+    title: `Error - ${err.name}`,
+  });
 });
 
 app.listen(PORT, () => {
