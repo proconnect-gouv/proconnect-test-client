@@ -51,10 +51,10 @@ const {
     NODE_ENV: z.enum(["development", "production"]).default("development"),
     PC_CLIENT_ID: z.string().min(1),
     PC_CLIENT_SECRET: z.string().min(1),
-    PC_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string(),
+    PC_ID_TOKEN_SIGNED_RESPONSE_ALG: z.string().optional(),
     PC_PROVIDER: z.url(),
     PC_SCOPES: z.string(),
-    PC_USERINFO_SIGNED_RESPONSE_ALG: z.string(),
+    PC_USERINFO_SIGNED_RESPONSE_ALG: z.string().optional(),
     PORT: z.coerce.number().int().min(80).max(65535).default(3000),
     SESSION_SECRET: z.string().min(1).max(100),
   })
@@ -92,7 +92,7 @@ app.use(
       secure: NODE_ENV === "production",
       sameSite: "lax",
     },
-  })
+  }),
 );
 app.use(expressLayouts);
 app.set("layout", "pages/main");
@@ -103,7 +103,7 @@ app.use(express.static("public"));
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(
   "/dsfr",
-  express.static(path.join(__dirname, "node_modules/@gouvfr/dsfr/dist"))
+  express.static(path.join(__dirname, "node_modules/@gouvfr/dsfr/dist")),
 );
 
 const objToUrlParams = (obj) =>
@@ -111,7 +111,7 @@ const objToUrlParams = (obj) =>
     chain(obj)
       .omitBy((v) => !v)
       .mapValues((o) => (isObject(o) ? JSON.stringify(o) : o))
-      .value()
+      .value(),
   );
 
 const getCurrentUrl = (req) =>
@@ -128,10 +128,10 @@ const getProviderConfig = async () => {
     PC_CLIENT_ID,
     {
       id_token_signed_response_alg: PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
-      userinfo_signed_response_alg: PC_USERINFO_SIGNED_RESPONSE_ALG || null,
+      userinfo_signed_response_alg: PC_USERINFO_SIGNED_RESPONSE_ALG,
     },
     client.ClientSecretPost(PC_CLIENT_SECRET),
-    configOptions
+    configOptions,
   );
   return config;
 };
@@ -195,7 +195,7 @@ const getAuthorizationControllerFactory = (extraParams) => {
           state,
           ...AUTHORIZATION_DEFAULT_PARAMS,
           ...extraParams,
-        })
+        }),
       );
 
       res.redirect(redirectUrl);
@@ -222,7 +222,7 @@ app.post(
         amr: { essential: true },
       },
     },
-  })
+  }),
 );
 
 app.get(CALLBACK_URL, async (req, res, next) => {
@@ -230,7 +230,7 @@ app.get(CALLBACK_URL, async (req, res, next) => {
     if (req.query.error) {
       throw new client.AuthorizationResponseError(
         `${req.query.error} - ${req.query.error_description}`,
-        { cause: currentUrl.searchParams }
+        { cause: currentUrl.searchParams },
       );
     }
     const config = await getProviderConfig();
@@ -242,7 +242,7 @@ app.get(CALLBACK_URL, async (req, res, next) => {
         expectedNonce: req.session.nonce,
         expectedState: req.session.state,
       },
-      configOptions
+      configOptions,
     );
 
     req.session.nonce = null;
@@ -252,7 +252,7 @@ app.get(CALLBACK_URL, async (req, res, next) => {
       config,
       tokens.access_token,
       claims.sub,
-      configOptions
+      configOptions,
     );
 
     req.session.idtoken = claims;
@@ -283,7 +283,7 @@ app.get("/logout", async (req, res, next) => {
       objToUrlParams({
         post_logout_redirect_uri: `${HOST}/`,
         id_token_hint,
-      })
+      }),
     );
 
     res.redirect(redirectUrl);
