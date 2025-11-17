@@ -159,12 +159,12 @@
               </li>
               <li>Connexion établie le 
                 <strong>
-                  <time datetime="<%= locals.userinfo.iat %>"><%= new Date(locals.userinfo.iat * 1000).toLocaleString() %></time>
+                  <time datetime="<%= locals.idtoken.iat %>"><%= new Date(locals.idtoken.iat * 1000).toLocaleString() %></time>
                 </strong>
               </li>
               <li>Date d'expiration de la connexion le 
                 <strong>
-                  <time datetime="<%= locals.userinfo.exp %>"><%= new Date(locals.userinfo.exp * 1000).toLocaleString() %></time>
+                  <time datetime="<%= locals.idtoken.exp %>"><%= new Date(locals.idtoken.exp * 1000).toLocaleString() %></time>
                 </strong>
               </li>
               <li>Type de connexion :
