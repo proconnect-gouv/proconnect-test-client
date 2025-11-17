@@ -157,8 +157,16 @@
                   <em>Non renseigné</em>
                 <% } %>
               </li>
-              <li>Connexion établie le <strong><%= new Date(locals.userinfo.iat * 1000).toLocaleString() %></strong></li>
-              <li>Date d'expiration de la connexion le <strong><%= new Date(locals.userinfo.exp * 1000).toLocaleString() %></strong></li>
+              <li>Connexion établie le 
+                <strong>
+                  <time datetime="<%= locals.userinfo.iat %>"><%= new Date(locals.userinfo.iat * 1000).toLocaleString() %></time>
+                </strong>
+              </li>
+              <li>Date d'expiration de la connexion le 
+                <strong>
+                  <time datetime="<%= locals.userinfo.exp %>"><%= new Date(locals.userinfo.exp * 1000).toLocaleString() %></time>
+                </strong>
+              </li>
               <li>Type de connexion :
                 <% if (locals.idtoken.amr) { %>
                   <strong><%= locals.idtoken.amr.join(', ') %></strong>
