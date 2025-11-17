@@ -166,6 +166,13 @@
                   <em>Non renseigné</em>
                 <% } %>
               </li>
+              <li>Classe de contexte d’authentification : 
+                <% if (locals.idtoken.acr) { %>
+                  <strong><%= locals.idtoken.acr %></strong>
+                <% } else { %>
+                  <em>Non renseigné</em>
+                <% } %>
+              </li>
 						</ul>
 					</div>
 				</div>

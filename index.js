@@ -199,6 +199,7 @@ app.post(
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
+        acr: { essential: true },
         amr: { essential: true },
         auth_time: { essential: true },
       },
@@ -211,7 +212,6 @@ app.post(
   getAuthorizationControllerFactory({
     claims: {
       id_token: {
-        amr: { essential: true },
         acr: {
           essential: true,
           values: [
@@ -221,6 +221,7 @@ app.post(
             ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
           ],
         },
+        amr: { essential: true },
       },
     },
   }),
@@ -238,6 +239,7 @@ app.post(
             ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT_2FA,
           ],
         },
+        amr: { essential: true },
       },
     },
   }),
