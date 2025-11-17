@@ -275,7 +275,10 @@ app.get(CALLBACK_URL, async (req, res, next) => {
       configOptions,
     );
 
-    console.dir({ userinfo: req.session.userinfo }, { depth: 6 });
+    console.dir(
+      { userinfo: req.session.userinfo, idtoken: req.session.idtoken },
+      { depth: 6 },
+    );
 
     req.session.idtoken = claims;
     req.session.id_token_hint = tokens.id_token;
