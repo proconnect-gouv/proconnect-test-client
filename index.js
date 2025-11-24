@@ -111,7 +111,15 @@ const getAuthorizationControllerFactory = (params, options) => {
           }),
         }),
       );
-      res.redirect(redirectUrl);
+      res.send(`
+      <!DOCTYPE html><head><title>Connexion ProConnect...</title></head>
+        <body>
+          <button onclick="window.open('${redirectUrl}', '_blank'); document.close();" id="login-link">
+            Se connecter avec ProConnect
+          </button>
+          <script>document.getElementById('login-link').click();</script>
+        </body>
+      </html>`);
     } catch (e) {
       next(e);
     }
@@ -194,66 +202,6 @@ app.post(
     })(req, res, next);
   },
 );
-
-app.get('/test-vb', async (req, res, next) => {
-  const config = await getProviderConfig();
-  const nonce = client.randomNonce();
-  const state = client.randomState();
-
-  req.session.state = state;
-  req.session.nonce = nonce;
-
-  const redirectUrl = client.buildAuthorizationUrl(
-    config,
-    objToUrlParams({
-      nonce,
-      state,
-      ...AUTHORIZATION_DEFAULT_PARAMS,
-      ...(process.env.EXTRA_PARAM_SP_NAME && {
-        sp_name: process.env.EXTRA_PARAM_SP_NAME,
-      }),
-    }),
-  );
-
-  res.send(`<html>
-<head></head>
-<body>
-  <p>
-    <a href="${redirectUrl}">Bouton ProConnect (simple link)</a>
-  </p>
-  <p>
-    <a target="_blank" rel="noopener noreferrer" href="${redirectUrl}">Bouton ProConnect (target blank link)</a>
-  </p>
-  <p>
-    <button onclick="window.location.href='${redirectUrl}'">Bouton ProConnect (window location href)</button>
-  </p>
-  <p>
-    <button onclick="window.location='${redirectUrl}'">Bouton ProConnect (window location)</button>
-  </p>
-  <p>
-    <button onclick="window.location.assign('${redirectUrl}')">Bouton ProConnect (window location assign)</button>
-  </p>
-  <p>
-    <button onclick="window.open('${redirectUrl}', '_self')">Bouton ProConnect (target self window open)</button>
-  </p>
-  <p>
-    <button onclick="window.open('${redirectUrl}', '_blank')">Bouton ProConnect (target blank window open)</button>
-  </p>
-  <p>
-    <button onclick="window.open('${redirectUrl}', '_parent')">Bouton ProConnect (target parent window open)</button>
-  </p>
-  <p>
-    <button onclick="window.open('${redirectUrl}', '_top')">Bouton ProConnect (target top window open)</button>
-  </p>
-  <p>
-    <button onclick="window.open('${redirectUrl}', '_unfencedTop')">Bouton ProConnect (target unfencedTop window open)</button>
-  </p>
-  <p>
-    <button onclick="window.open('${redirectUrl}', 'mozillaWindow', 'popup')">Bouton ProConnect (popup window open)</button>
-  </p>
-</body>
-</html>`);
-})
 
 app.get(process.env.CALLBACK_URL, async (req, res, next) => {
   try {
