@@ -73,6 +73,14 @@
         </form>
         <br>
         <% if (locals.showBetaFeatures) { %>
+            <form action="/login-with-303" method="post">
+                <button id="login-with-303">Se connecter avec une redirection 303</button>
+            </form>
+            <br>
+            <form action="/login-with-302" method="post">
+                <button id="login-with-302">Se connecter avec une redirection 302</button>
+            </form>
+            <br>
             <form action="/select-organization" method="post">
                 <button id="select-organization">Changer d’organisation</button>
             </form>

@@ -85,8 +85,11 @@ app.get("/", async (req, res, next) => {
   }
 });
 
-const getAuthorizationControllerFactory = (params, options) => {
-  const shouldReplaceDefaultParams = !!options?.shouldReplaceDefaultParams;
+const getAuthorizationControllerFactory = (params, options = {}) => {
+  const {
+    shouldReplaceDefaultParams = false,
+    connexionMode = "render_auto_followed_link",
+  } = options;
   return async (req, res, next) => {
     try {
       const config = await getProviderConfig();
@@ -111,15 +114,26 @@ const getAuthorizationControllerFactory = (params, options) => {
           }),
         }),
       );
-      res.send(`
-      <!DOCTYPE html><head><title>Connexion ProConnect...</title></head>
-        <body>
-          <button onclick="window.open('${redirectUrl}', '_blank'); document.close();" id="login-link">
-            Se connecter avec ProConnect
-          </button>
-          <script>document.getElementById('login-link').click();</script>
-        </body>
-      </html>`);
+      if (connexionMode === "render_auto_followed_link") {
+        res.send(`
+          <!DOCTYPE html><head><title>Connexion ProConnect...</title></head>
+            <body>
+              <button onclick="window.open('${redirectUrl}', '_blank'); document.close();" id="login-link">
+                Se connecter avec ProConnect
+              </button>
+              <script>document.getElementById('login-link').click();</script>
+            </body>
+          </html>`);
+      } else if (connexionMode === "303_redirect") {
+        res.redirect(303, redirectUrl);
+      } else if (connexionMode === "302_redirect") {
+        res.redirect(redirectUrl);
+      } else
+        next(
+          new Error(
+            `not implemented connexionMode: ${connexionMode} - should be 'render_auto_followed_link' or '303_redirect' or '302_redirect'`,
+          ),
+        );
     } catch (e) {
       next(e);
     }
@@ -127,6 +141,20 @@ const getAuthorizationControllerFactory = (params, options) => {
 };
 
 app.post("/login", getAuthorizationControllerFactory());
+
+app.post(
+  "/login-with-303",
+  getAuthorizationControllerFactory(undefined, {
+    connexionMode: "303_redirect",
+  }),
+);
+
+app.post(
+  "/login-with-302",
+  getAuthorizationControllerFactory(undefined, {
+    connexionMode: "302_redirect",
+  }),
+);
 
 app.post(
   "/select-organization",
