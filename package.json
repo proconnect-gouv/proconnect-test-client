@@ -21,7 +21,7 @@
   "dependencies": {
     "body-parser": "^2.2.1",
     "dotenv-flow": "^4.1.0",
-    "ejs": "^3.1.10",
+    "ejs": "^4.0.1",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
     "lodash-es": "^4.17.21",
