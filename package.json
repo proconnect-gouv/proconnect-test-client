@@ -23,7 +23,7 @@
     "dotenv-flow": "^4.1.0",
     "ejs": "^4.0.1",
     "express": "^5.2.1",
-    "express-session": "^1.18.2",
+    "express-session": "^1.19.0",
     "lodash-es": "^4.17.23",
     "morgan": "^1.10.1",
     "openid-client": "^6.8.1"
