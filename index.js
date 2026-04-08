@@ -162,6 +162,8 @@ app.post(
             process.env.ACR_VALUE_FOR_EIDAS3,
             process.env.ACR_VALUE_FOR_SELF_ASSERTED_2FA,
             process.env.ACR_VALUE_FOR_CONSISTENCY_CHECKED_2FA,
+            process.env.ACR_VALUE_FOR_EIDAS0_MFA,
+            process.env.ACR_VALUE_FOR_EIDAS1_MFA,
           ],
         },
       },
