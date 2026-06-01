@@ -86,5 +86,11 @@ More clients are available at: https://github.com/proconnect-gouv/moncomptepro/b
 ```
 cd e2e
 npm i
+npm start
+```
+
+Then:
+
+```
 npm test
 ```

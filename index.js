@@ -42,14 +42,14 @@ const configOptions =
 
 const getProviderConfig = async () => {
   const config = await client.discovery(
-    new URL(process.env.PC_PROVIDER),
-    process.env.PC_CLIENT_ID,
+    new URL(process.env.PROVIDER),
+    process.env.CLIENT_ID,
     {
-      id_token_signed_response_alg: process.env.PC_ID_TOKEN_SIGNED_RESPONSE_ALG,
+      id_token_signed_response_alg: process.env.ID_TOKEN_SIGNED_RESPONSE_ALG,
       userinfo_signed_response_alg:
-        process.env.PC_USERINFO_SIGNED_RESPONSE_ALG || null,
+        process.env.USERINFO_SIGNED_RESPONSE_ALG || null,
     },
-    client.ClientSecretPost(process.env.PC_CLIENT_SECRET),
+    client.ClientSecretPost(process.env.CLIENT_SECRET),
     configOptions,
   );
   return config;
@@ -57,7 +57,7 @@ const getProviderConfig = async () => {
 
 const AUTHORIZATION_DEFAULT_PARAMS = {
   redirect_uri: `${process.env.HOST}${process.env.CALLBACK_URL}`,
-  scope: process.env.PC_SCOPES,
+  scope: process.env.SCOPES,
   login_hint: process.env.LOGIN_HINT || null,
   acr_values: process.env.ACR_VALUES?.split(",") || null,
   claims: {
