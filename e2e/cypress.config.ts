@@ -17,7 +17,7 @@ export default defineConfig({
     supportFile: false,
   },
   env: {
-    PC_PROVIDER: process.env.PC_PROVIDER,
+    PC_PROVIDER: process.env.PROVIDER,
   },
 });
 
