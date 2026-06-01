@@ -59,7 +59,7 @@ const AUTHORIZATION_DEFAULT_PARAMS = {
   redirect_uri: `${process.env.HOST}${process.env.CALLBACK_URL}`,
   scope: process.env.SCOPES,
   login_hint: process.env.LOGIN_HINT || null,
-  acr_values: process.env.ACR_VALUES ? process.env.ACR_VALUES.split(",") : null,
+  acr_values: process.env.ACR_VALUES?.split(",") || null,
   claims: {
     id_token: {
       amr: {
@@ -157,7 +157,7 @@ app.post(
         amr: { essential: true },
         acr: {
           essential: true,
-          values: process.env.ACR_VALUES_FOR_MFA ? process.env.ACR_VALUES_FOR_MFA.split(",") : null,
+          values: process.env.ACR_VALUES_FOR_MFA?.split(",") || null,
         },
       },
     },
