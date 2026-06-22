@@ -121,6 +121,28 @@ const getAuthorizationControllerFactory = (params, options) => {
 app.post("/login", getAuthorizationControllerFactory());
 
 app.post(
+  "/login-full-acr",
+  getAuthorizationControllerFactory({
+    claims: {
+      id_token: {
+        amr: { essential: true },
+        acr: {
+          essential: true,
+          values: [
+            "eidas0",
+            "eidas0-mfa",
+            "eidas1",
+            "eidas1-mfa",
+            "eidas2",
+            "eidas3",
+          ],
+        },
+      },
+    },
+  }),
+);
+
+app.post(
   "/select-organization",
   getAuthorizationControllerFactory({
     prompt: "select_organization",
@@ -157,7 +179,9 @@ app.post(
         amr: { essential: true },
         acr: {
           essential: true,
-          values: process.env.ACR_VALUES_FOR_MFA ? process.env.ACR_VALUES_FOR_MFA.split(",") : null,
+          values: process.env.ACR_VALUES_FOR_MFA
+            ? process.env.ACR_VALUES_FOR_MFA.split(",")
+            : null,
         },
       },
     },
