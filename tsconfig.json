@@ -5,5 +5,5 @@
     "jsxImportSource": "hono/jsx",
     "noEmit": true
   },
-  "include": ["index.ts", "views"]
+  "include": ["*.ts", "views"]
 }

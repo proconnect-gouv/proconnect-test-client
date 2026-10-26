@@ -8,7 +8,7 @@ COPY ./package*.json ./
 RUN --mount=id=npm,type=cache,target=/root/.npm,sharing=locked \
     npm install --omit=dev
 
-COPY ./.env index.ts tsconfig.json ./
+COPY ./.env index.ts log.ts tsconfig.json ./
 COPY ./views/ ./views/
 
 USER node
