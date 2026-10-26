@@ -13,23 +13,27 @@
   "license": "AGPL-3.0",
   "author": "",
   "type": "module",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node .",
-    "test": "cd e2e && npm run test"
+    "start": "tsx .",
+    "test": "cd e2e && npm run test",
+    "typecheck": "tsc --checkers 4"
   },
   "dependencies": {
-    "body-parser": "^2.4.0",
+    "@hono/node-server": "^2.1.5",
+    "@tsconfig/node-lts": "24.0.1",
+    "@tsconfig/node-ts": "23.6.4",
+    "@tsconfig/strictest": "2.0.8",
     "dotenv-flow": "^4.1.0",
-    "ejs": "^7.0.2",
-    "express": "^5.3.0",
-    "express-session": "^1.19.0",
-    "lodash-es": "^4.18.1",
-    "morgan": "^1.12.1",
-    "openid-client": "^6.8.8"
+    "hono": "^4.13.14",
+    "openid-client": "^6.8.8",
+    "tsx": "^4.23.15",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "prettier": "^3.9.10"
+    "@types/node": "^22.20.5",
+    "prettier": "^3.9.10",
+    "typescript": "^7.0.2"
   },
   "engineStrict": true,
   "engines": {

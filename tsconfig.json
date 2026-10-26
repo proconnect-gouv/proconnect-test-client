@@ -1,0 +1,9 @@
+{
+  "extends": ["@tsconfig/node-lts", "@tsconfig/node-ts", "@tsconfig/strictest"],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "hono/jsx",
+    "noEmit": true
+  },
+  "include": ["index.ts", "views"]
+}
