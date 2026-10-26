@@ -16,7 +16,7 @@ export default defineConfig({
     videoCompression: 32,
     supportFile: false,
   },
-  env: {
+  expose: {
     PC_PROVIDER: process.env.PROVIDER,
   },
 });

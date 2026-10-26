@@ -23,13 +23,13 @@ Then("je vois {string}", function (text: string) {
 //
 
 When("je vois {string} sur ProConnect", (_text: string) => {
-  cy.origin(Cypress.env("PC_PROVIDER"), { args: _text }, (text) => {
+  cy.origin(Cypress.expose("PC_PROVIDER"), { args: _text }, (text) => {
     cy.contains(text);
   });
 });
 
 When("je clique sur {string} sur ProConnect", (_text: string) => {
-  cy.origin(Cypress.env("PC_PROVIDER"), { args: _text }, (text) => {
+  cy.origin(Cypress.expose("PC_PROVIDER"), { args: _text }, (text) => {
     cy.contains(text).click();
   });
 });
@@ -37,7 +37,7 @@ When("je clique sur {string} sur ProConnect", (_text: string) => {
 When(
   "je me connecte en tant que user@yopmail.com sur ProConnect",
   (path: string) => {
-    cy.origin(Cypress.env("PC_PROVIDER"), () => {
+    cy.origin(Cypress.expose("PC_PROVIDER"), () => {
       cy.get('[name="login"]').type("user@yopmail.com");
       cy.get('[type="submit"]').click();
 
