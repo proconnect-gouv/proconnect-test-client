@@ -16,6 +16,7 @@ jobs:
           cache: "npm"
           node-version-file: package.json
       - run: npm ci
+      - run: npm run typecheck
 
   e2e:
     runs-on: ubuntu-latest
