@@ -17,7 +17,7 @@ dotenvFlow.config({
 const optional_string = z
   .string()
   .optional()
-  .transform((value) => value || undefined);
+  .transform((value) => (value === "" ? undefined : value));
 const optional_list = optional_string.transform((value) => value?.split(","));
 const flag = z.stringbool().default(false);
 
@@ -48,7 +48,7 @@ const env = z
 const CustomConnectionBody = z.object({
   "custom-params": z
     .string()
-    .transform((value) => JSON.parse(value))
+    .transform((value): unknown => JSON.parse(value))
     .pipe(z.record(z.string(), z.unknown())),
 });
 
@@ -67,9 +67,15 @@ type AppEnv = { Variables: { session: Session; session_id: string } };
 const sessions = new Map<string, Session>();
 
 const session = createMiddleware<AppEnv>(async (c, next) => {
+  const signed_session_id = await getSignedCookie(
+    c,
+    env.SESSION_SECRET,
+    "pc_session",
+  );
   const session_id =
-    (await getSignedCookie(c, env.SESSION_SECRET, "pc_session")) ||
-    crypto.randomUUID();
+    typeof signed_session_id === "string"
+      ? signed_session_id
+      : crypto.randomUUID();
   const current = sessions.get(session_id) ?? {};
   sessions.set(session_id, current);
   c.set("session", current);
@@ -83,13 +89,13 @@ const session = createMiddleware<AppEnv>(async (c, next) => {
 
 const app = new Hono().use(logger()).use(session);
 
-const obj_to_url_params = (obj: object) =>
+const obj_to_url_params = (obj: Record<string, unknown>) =>
   new URLSearchParams(
     Object.entries(obj)
-      .filter(([, value]) => value)
+      .filter(([, value]) => Boolean(value))
       .map(([key, value]): [string, string] => [
         key,
-        typeof value === "object" ? JSON.stringify(value) : String(value),
+        typeof value === "string" ? value : JSON.stringify(value),
       ]),
   );
 
@@ -158,7 +164,7 @@ const get_authorization_controller_factory = (
   options?: { should_replace_default_params: boolean },
 ) => {
   const should_replace_default_params =
-    !!options?.should_replace_default_params;
+    options?.should_replace_default_params === true;
   return async (c: Context<AppEnv>) => {
     const config = await get_provider_config();
     const nonce = client.randomNonce();
@@ -176,7 +182,7 @@ const get_authorization_controller_factory = (
         nonce,
         state,
         ...computed_params,
-        ...(env.EXTRA_PARAM_SP_NAME && {
+        ...(env.EXTRA_PARAM_SP_NAME !== undefined && {
           sp_name: env.EXTRA_PARAM_SP_NAME,
         }),
       }),
@@ -282,10 +288,11 @@ app.get(env.CALLBACK_URL, async (c) => {
     .header("x-forwarded-proto")
     ?.split(",")[0]
     ?.trim();
-  if (forwarded_proto) current_url.protocol = forwarded_proto;
+  if (forwarded_proto !== undefined && forwarded_proto !== "")
+    current_url.protocol = forwarded_proto;
 
   const error = c.req.query("error");
-  if (error) {
+  if (error !== undefined && error !== "") {
     throw new client.AuthorizationResponseError(
       `${error} - ${c.req.query("error_description")}`,
       { cause: current_url.searchParams },
