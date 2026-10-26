@@ -19,6 +19,7 @@
     "lint": "oxlint",
     "start": "tsx .",
     "test": "cd e2e && npm run test",
+    "test:unit": "tsx --test log.test.ts",
     "typecheck": "tsc --checkers 4"
   },
   "dependencies": {

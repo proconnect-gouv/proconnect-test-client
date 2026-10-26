@@ -1,11 +1,14 @@
+import { createHash } from "node:crypto";
 import { serve } from "@hono/node-server";
 import dotenvFlow from "dotenv-flow";
 import { Hono, type Context } from "hono";
 import { getSignedCookie, setSignedCookie } from "hono/cookie";
 import { createMiddleware } from "hono/factory";
-import { logger } from "hono/logger";
+import { requestId, type RequestIdVariables } from "hono/request-id";
+import { routePath } from "hono/route";
 import * as client from "openid-client";
 import * as z from "zod";
+import { exception_attributes, log_event } from "./log.ts";
 import { ErrorPage } from "./views/error.tsx";
 import { IndexPage } from "./views/index.tsx";
 import { NotFoundPage } from "./views/not_found.tsx";
@@ -21,7 +24,7 @@ const optional_string = z
 const optional_list = optional_string.transform((value) => value?.split(","));
 const flag = z.stringbool().default(false);
 
-const env = z
+const parsed_env = z
   .object({
     ACR_VALUE_FOR_CERTIFICATION_DIRIGEANT: optional_string,
     ACR_VALUES: optional_list,
@@ -43,7 +46,23 @@ const env = z
     STYLESHEET_URL: optional_string,
     USERINFO_SIGNED_RESPONSE_ALG: optional_string,
   })
-  .parse(process.env);
+  .safeParse(process.env);
+
+if (!parsed_env.success) {
+  log_event({
+    attributes: {
+      issues: parsed_env.error.issues.map(({ code, message, path }) => ({
+        code,
+        message,
+        path: path.map(String).join("."),
+      })),
+    },
+    name: "config.validation.failed",
+    severity: "FATAL",
+  });
+  process.exit(1);
+}
+const env = parsed_env.data;
 
 const CustomConnectionBody = z.object({
   "custom-params": z
@@ -62,7 +81,9 @@ type Session = {
   pending_login?: { nonce: string; state: string };
   signed_in?: SignedIn;
 };
-type AppEnv = { Variables: { session: Session; session_id: string } };
+type AppEnv = {
+  Variables: RequestIdVariables & { session: Session; session_id: string };
+};
 
 const sessions = new Map<string, Session>();
 
@@ -87,7 +108,27 @@ const session = createMiddleware<AppEnv>(async (c, next) => {
   await next();
 });
 
-const app = new Hono().use(logger()).use(session);
+const access_log = createMiddleware<AppEnv>(async (c, next) => {
+  const started_at = performance.now();
+  await next();
+  log_event({
+    attributes: {
+      duration_ms: Math.round(performance.now() - started_at),
+      "http.request.method": c.req.method,
+      "http.response.status_code": c.res.status,
+      "http.route": routePath(c),
+      "request.id": c.var.requestId,
+      session_id_hash: createHash("sha256")
+        .update(c.var.session_id)
+        .digest("hex")
+        .slice(0, 16),
+    },
+    name: "http.server.request.completed",
+    severity: "INFO",
+  });
+});
+
+const app = new Hono().use(requestId()).use(session).use(access_log);
 
 const obj_to_url_params = (obj: Record<string, unknown>) =>
   new URLSearchParams(
@@ -345,12 +386,25 @@ app.post("/logout", async (c) => {
 });
 
 app.onError((err, c) => {
-  console.error(err);
+  log_event({
+    attributes: {
+      ...exception_attributes(err),
+      "http.request.method": c.req.method,
+      "http.response.status_code": 500,
+      "http.route": routePath(c),
+      "request.id": c.var.requestId,
+      session_has_pending_login: c.var.session.pending_login !== undefined,
+      session_is_signed_in: c.var.session.signed_in !== undefined,
+    },
+    name: "http.server.request.exception",
+    severity: "ERROR",
+  });
 
   return c.html(
     ErrorPage({
       error: err.name,
       error_description: err.message,
+      request_id: c.var.requestId,
       stylesheet_url: env.STYLESHEET_URL,
       title: `Error - ${env.SITE_TITLE}`,
     }),
@@ -370,5 +424,9 @@ app.notFound((c) =>
 );
 
 serve({ fetch: app.fetch, port: env.PORT }, ({ port }) => {
-  console.log(`App listening on port ${port}`);
+  log_event({
+    attributes: { "server.port": port },
+    name: "server.started",
+    severity: "INFO",
+  });
 });

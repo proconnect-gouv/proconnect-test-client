@@ -81,6 +81,12 @@ authorized_scopes: openid email profile organization
 
 More clients are available at: https://github.com/proconnect-gouv/moncomptepro/blob/main/scripts/fixtures.sql
 
+## Logs
+
+The server writes one JSON object per line on stdout. Each request emits an `http.server.request.completed` event, and an unhandled error emits an `http.server.request.exception` event with its `cause` chain under `exception.causes`. The error page shows the request id: search the logs for that `request.id` to find both events.
+
+Tokens, authorization codes and session ids are never logged. Requests from the same browser session share a `session_id_hash`.
+
 ## Run Cypress test
 
 ```
