@@ -22,7 +22,7 @@
     "typecheck": "tsc --checkers 4"
   },
   "dependencies": {
-    "@hono/node-server": "^2.1.5",
+    "@hono/node-server": "^2.1.6",
     "@tsconfig/node-lts": "24.0.1",
     "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/strictest": "2.0.8",
