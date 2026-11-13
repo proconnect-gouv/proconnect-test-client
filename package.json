@@ -27,7 +27,7 @@
     "@tsconfig/node-ts": "23.6.4",
     "@tsconfig/strictest": "2.0.8",
     "dotenv-flow": "^4.1.0",
-    "hono": "^4.13.14",
+    "hono": "^4.13.18",
     "openid-client": "^6.8.9",
     "tsx": "^4.23.15",
     "zod": "^4.6.7"
