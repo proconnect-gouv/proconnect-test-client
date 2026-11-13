@@ -43,7 +43,7 @@
   "engineStrict": true,
   "engines": {
     "node": ">=22",
-    "npm": ">=10"
+    "npm": ">=12.2.2"
   },
   "prettier": {
     "plugins": [
