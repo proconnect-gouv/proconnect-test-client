@@ -42,7 +42,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=22",
+    "node": ">=26.13.0",
     "npm": ">=10"
   },
   "prettier": {
