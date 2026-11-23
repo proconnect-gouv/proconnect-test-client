@@ -24,7 +24,7 @@
   "dependencies": {
     "@hono/node-server": "^2.1.6",
     "@tsconfig/node-lts": "24.0.1",
-    "@tsconfig/node-ts": "23.6.4",
+    "@tsconfig/node-ts": "23.6.5",
     "@tsconfig/strictest": "2.0.8",
     "dotenv-flow": "^4.1.0",
     "hono": "^4.13.17",
